@@ -1,5 +1,11 @@
 #include "GameDisplayDlg.h"
 //////////////////////////////////////////////////////////////////////////
+#define COLOR_SUITNAME			ARGB(255, 178, 234, 97)
+#define COLOR_SUITNAMEITEM_ACTIVE	ARGB(255, 152, 199, 146)
+#define COLOR_SUITNAMEITEM_UNACTIVE	ARGB(255, 135, 135, 135)
+#define COLOR_EXTRAATRRIB_ACTIVE	ARGB(255, 103, 224, 246)
+#define COLOR_EXTRAATTRIB_UNACTIVE	ARGB(255, 135, 135, 135)
+//////////////////////////////////////////////////////////////////////////
 static const DWORD s_dwItemNameColor = ARGB(255, 195, 119, 69);
 
 static const int s_nTitleHeight = 16;
@@ -220,13 +226,14 @@ void GameDisplayDlg::ShowItemAttrib(const ItemAttrib* _pItem, int _nOwner /* = -
 
 	memcpy(&m_stShowItem, _pItem, sizeof(ItemAttrib));
 
-	ClearItems();
 	GenShowItems();
 	ShowDialog();
 }
 
 void GameDisplayDlg::GenShowItems()
 {
+	ClearItems();
+
 	if(m_stShowItem.type == 0)
 	{
 		return;
@@ -282,8 +289,8 @@ void GameDisplayDlg::GenShowItems()
 	}
 
 	//	name
-	TEST_TEXTWIDTH(m_stShowItem.name, 12);
-	DisplayItem* pNameItem = AddStringItem(m_stShowItem.name, nCurX, nCurY);
+	TEST_TEXTWIDTH(m_stShowItem.name, 14);
+	DisplayItem* pNameItem = AddStringItem(m_stShowItem.name, nCurX, nCurY, ARGB_YELLOW, AfxGetFont14());
 	//nRectHeight += s_nTitleHeight;
 
 	//	item icon
@@ -819,6 +826,172 @@ void GameDisplayDlg::GenShowItems()
 	}
 
 	//	suit attribute
+	/*if(IsEquipItem(&m_stShowItem) &&
+		m_stShowItem.atkPalsy != 0)
+	{
+		SuitExtraAttrib* pExtraAttribList = GetGlobalSuitExtraAttrib(m_stShowItem.atkPalsy);
+
+		if(pExtraAttribList)
+		{
+			//	a line blank
+			++nDetailLine;
+
+			//	Suit name
+			const ItemAttrib* pPlayerItem = NULL;
+			bool bActived[PLAYER_ITEM_TOTAL];
+			ZeroMemory(bActived, sizeof(bActived));
+			int nActiveItemSum = 0;
+			int nActiveItemAll = 0;
+
+			for(int i = 0; i < PLAYER_ITEM_TOTAL; ++i)
+			{
+				if(pExtraAttribList->nSuitEquipID[i] != 0)
+				{
+					++nActiveItemAll;
+				}
+			}
+
+			for(int i = PLAYER_ITEM_WEAPON; i < PLAYER_ITEM_TOTAL; ++i)
+			{
+				if(-1 == m_nOwner)
+				{
+					pPlayerItem = GamePlayer::GetInstance()->GetPlayerItem((PLAYER_ITEM_TYPE)i);
+				}
+				else
+				{
+					pPlayerItem = m_stItems[i];
+				}
+
+				if(pPlayerItem->atkPalsy == pExtraAttribList->nSuitID)
+				{
+					//	检测是否存在过
+					for(int j = 0; j < 10; ++j)
+					{
+						if(pPlayerItem->id == pExtraAttribList->nSuitEquipID[j] &&
+							!bActived[j] &&
+							pExtraAttribList->nSuitEquipID[j] != 0)
+						{
+							bActived[j] = true;
+							++nActiveItemSum;
+							break;
+						}
+					}
+				}
+			}
+
+			nCurX = nDetailDrawX;
+			nCurY = nDetailDrawY;
+			nCurY += s_nEachLineHeight * nDetailLine;
+			sprintf(szText, "[%s](%d/%d)",
+				pExtraAttribList->szSuitChName,
+				nActiveItemSum,
+				nActiveItemAll);
+			nCurWidth = GetTextWidth(szText, 12);
+			TEST_MAXWIDTH(nCurWidth);
+			AddStringItem(szText, nCurX, nCurY, ARGB_GREEN);
+			++nDetailLine;
+			
+			//	suit item name
+			for(int i = 0; i < PLAYER_ITEM_TOTAL; ++i)
+			{
+				if(pExtraAttribList->nSuitEquipID[i] != 0)
+				{
+					ItemAttrib item;
+					ZeroMemory(&item, sizeof(ItemAttrib));
+
+					if(GameInfoManager::GetInstance()->GetItemAttrib(pExtraAttribList->nSuitEquipID[i], &item))
+					{
+						nCurX = nDetailDrawX;
+						nCurY = nDetailDrawY;
+						nCurY += s_nEachLineHeight * nDetailLine;
+						nCurWidth = GetTextWidth(item.name, 12);
+						TEST_MAXWIDTH(nCurWidth);
+						if(bActived[i])
+						{
+							AddStringItem(item.name, nCurX, nCurY, COLOR_SUITNAMEITEM_ACTIVE);
+						}
+						else
+						{
+							AddStringItem(item.name, nCurX, nCurY, COLOR_SUITNAMEITEM_UNACTIVE);
+						}
+						
+						++nDetailLine;
+					}
+				}
+			}
+
+			//	a line blank
+			++nDetailLine;
+
+			//	suit effect describe
+			nCurX = nDetailDrawX;
+			nCurY = nDetailDrawY;
+			nCurY += s_nEachLineHeight * nDetailLine;
+			AfxGetPrinter()->SetColor(ARGB_GREEN);
+			if(pExtraAttribList->nSuitShowType == 1)
+			{
+				AddStringItem("[特殊效果]", nCurX, nCurY, ARGB_GREEN);
+			}
+			else
+			{
+				AddStringItem("[套装效果]", nCurX, nCurY, ARGB_GREEN);
+			}
+			++nDetailLine;
+
+			//	suit effect
+			int nActiveMax = 0;
+			int nActiveAttribSum = 0;
+
+			for(int i = 0; i < MAX_EXTRAATTIRB; ++i)
+			{
+				if(nActiveItemSum >= pExtraAttribList->nActiveSum[i] &&
+					pExtraAttribList->nActiveSum[i] > nActiveMax)
+				{
+					nActiveMax = pExtraAttribList->nActiveSum[i];
+					nActiveAttribSum = pExtraAttribList->nActiveAttribSum[i];
+				}
+			}
+
+			ItemExtraAttribItem extraAttrib;
+
+			for(int i = 0; i < PLAYER_ITEM_TOTAL; ++i)
+			{
+				if(pExtraAttribList->stExtraAttrib[i].nAttribID == 0)
+				{
+					break;
+				}
+
+				DWORD dwItemColor = COLOR_EXTRAATTRIB_UNACTIVE;
+				if(nActiveAttribSum > i)
+				{
+					dwItemColor = COLOR_EXTRAATRRIB_ACTIVE;
+				}
+
+				extraItem = pExtraAttribList->stExtraAttrib[i];
+				if(extraItem.nAttribID == EAID_AC ||
+					extraItem.nAttribID == EAID_MAC ||
+					extraItem.nAttribID == EAID_DC ||
+					extraItem.nAttribID == EAID_MC ||
+					extraItem.nAttribID == EAID_SC)
+				{
+					sprintf(szText, "%s%d-%d",
+						g_szExtraAttribDescriptor[extraItem.nAttribID], HIWORD(extraItem.nAttribValue), LOWORD(extraItem.nAttribValue));
+				}
+				else
+				{
+					sprintf(szText, "%s+%d",
+						g_szExtraAttribDescriptor[extraItem.nAttribID], extraItem.nAttribValue);
+				}
+
+				nCurX = nDetailDrawX;
+				nCurY = nDetailDrawY;
+				nCurY += s_nEachLineHeight * nDetailLine;
+
+				AfxGetPrinter()->PrintWithoutStroke(nCurX, nCurY, szText, dwItemColor);
+				++nDetailLine;
+			}
+		}
+	}*/
 
 	//	addition information
 	if(TEST_FLAG_BOOL(m_stShowItem.EXPR, /*EXPR_MASK_NOSAVE*/1) ||
@@ -854,4 +1027,12 @@ void GameDisplayDlg::GenShowItems()
 	m_rcClient.left = m_rcClient.top = 0;
 	m_rcClient.right = nMaxWidth + 2 * s_nLeftBoundary;
 	m_rcClient.bottom = s_nTitleHeight + s_nItemIconHeight + s_nItemIntroGapX + s_nEachLineHeight * nDetailLine + 2 * s_nTopBoundary;
+
+	//	adjust name rect
+	if(pNameItem)
+	{
+		int nNameCenterX = GetTextWidth(pNameItem->xText.c_str(), 14);
+		nNameCenterX = (m_rcClient.right - m_rcClient.left - nNameCenterX) / 2;
+		pNameItem->nPosX = nNameCenterX;
+	}
 }

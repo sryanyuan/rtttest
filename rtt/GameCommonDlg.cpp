@@ -26,6 +26,7 @@ unsigned int GetTextWidth(const char* _pText, size_t _nFontSize)
 hgeResourceManager* g_pResMgr = NULL;
 static TextPrinter* printer = new TextPrinter;
 static GfxFont* pFont12 = new GfxFont("ËÎÌו", 12, FALSE, FALSE, FALSE);
+static GfxFont* pFont14 = new GfxFont("ËÎÌו", 14, TRUE, FALSE, FALSE);
 //(const char* lpsFontName, int nFaceSize, BOOL bBold /* = FALSE */, BOOL bItalic /* = FALSE */, BOOL bAntialias /* = TRUE */)
 HGE* s_pHge = NULL;
 
@@ -47,6 +48,11 @@ void AfxSetHge(HGE* _pHge)
 GfxFont* AfxGetFont()
 {
 	return pFont12;
+}
+
+GfxFont* AfxGetFont14()
+{
+	return pFont14;
 }
 //////////////////////////////////////////////////////////////////////////
 GameCommonDlg::GameCommonDlg()

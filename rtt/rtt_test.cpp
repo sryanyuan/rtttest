@@ -62,8 +62,8 @@ bool RttTest::UserInitial()
 	//m_pTestDlg->AddStringItem("≤‚ ‘", 50, 50);
 	ItemAttrib item;
 	ZeroMemory(&item, sizeof(ItemAttrib));
-	strcpy(item.name, "≤‚ ‘");
-	item.type = 3;
+	strcpy(item.name, "–°µ∂");
+	item.type = 1;
 	item.EXPR = 3;
 	item.maxAC = 5;
 	item.maxMAC = 411;

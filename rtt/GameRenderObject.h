@@ -24,12 +24,14 @@
 #define ARGB_WHITE				ARGB(255, 255, 255, 255)
 #define ARGB_GREEN				ARGB(255, 0, 255, 0)
 #define ARGB_RED				ARGB(255, 255, 0, 0)
+#define ARGB_YELLOW				ARGB(255, 255, 255, 0)
 
 #define TEST_FLAG_BOOL(flag,mask)	((flag & mask ) != 0)
 //////////////////////////////////////////////////////////////////////////
 unsigned int GetTextWidth(const char* _pText, size_t _nFontSize);
 TextPrinter* AfxGetPrinter();
 GfxFont* AfxGetFont();
+GfxFont* AfxGetFont14();
 HGE* AfxGetHge();
 void AfxSetHge(HGE* _pHge);
 
