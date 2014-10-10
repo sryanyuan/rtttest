@@ -59,11 +59,40 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	char szBuf[MAX_PATH];
 	sprintf(szBuf, "%s", szText);
 
-	/*OfflineSellSystem::GetInstance()->Initialize("c:\\1.db");
-	ItemAttrib item;
+	OfflineSellSystem::GetInstance()->Initialize("c:\\1.db");
+	OfflineSellSystem::GetInstance()->CopyFromSQL();
+
+
+	/*ItemAttrib item;
 	ZeroMemory(&item, sizeof(ItemAttrib));
 	strcpy(item.name, "小东西");
-	OfflineSellSystem::GetInstance()->AddSellItem(1, 1000, 0, "卖东西", &item);*/
+	OfflineSellSystem::GetInstance()->AddSellItem(1, 1000, 0, "卖东西", &item);
+	strcpy(item.name, "大东西");
+	OfflineSellSystem::GetInstance()->AddSellItem(2, 1000, 0, "卖东西", &item);
+	strcpy(item.name, "东西");
+	OfflineSellSystem::GetInstance()->AddSellItem(3, 1000, 0, "卖东西", &item);
+	strcpy(item.name, "ddsz");
+	OfflineSellSystem::GetInstance()->AddSellItem(3, 1000, 0, "卖东西", &item);
+	strcpy(item.name, "dahrdsz");
+	OfflineSellSystem::GetInstance()->AddSellItem(3, 1000, 0, "卖东西", &item);
+
+	OfflineSellSystem::GetInstance()->AddSoldItem(2, 2888, 0, "小刀", "买东西");
+	OfflineSellSystem::GetInstance()->AddSoldItem(4, 3888, 0, "小刀", "买东西");
+	OfflineSellSystem::GetInstance()->AddSoldItem(5, 4888, 0, "小刀", "买东西");*/
+
+	const SellItem* pItem = OfflineSellSystem::GetInstance()->GetSellItem(1);
+	if(pItem)
+	{
+		SellItem stSoldItem = *pItem;
+		if(OfflineSellSystem::GetInstance()->RemoveSellItem(pItem->nItemID))
+		{
+			OfflineSellSystem::GetInstance()->AddSoldItem(stSoldItem.nUID, stSoldItem.nMoney, stSoldItem.nGold, stSoldItem.stAttrib.name, "买东西的");
+		}
+	}
+
+	SoldItemList xSoldList;
+	OfflineSellSystem::GetInstance()->QuerySoldItem(1, xSoldList);
+
 	RttTest t;
 	t.Exec();
 }
