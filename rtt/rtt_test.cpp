@@ -75,6 +75,35 @@ DWORD GetHalfByte(DWORD _dwData, int _nIndex)
 		return GetHighHalfByte(bData);
 	}
 }
+
+DWORD SetHalfByte(DWORD _dwData, int _nIndex, BYTE _bData)
+{
+	if(_nIndex <= 0 ||
+		_nIndex > 8)
+	{
+		return _dwData;
+	}
+
+	DWORD dwData = _dwData;
+	WORD wData = 0;
+
+	int nPtrOffset = _nIndex / 2;
+	BYTE* pByte = (BYTE*)(&dwData) + nPtrOffset;
+	BYTE bData = *pByte;
+
+	if(_nIndex % 2 == 0)
+	{
+		BYTE bHigh = GetHighHalfByte(bData);
+		*pByte = MakeByte(_bData, bHigh);
+	}
+	else
+	{
+		BYTE bLow = GetLowHalfByte(bData);
+		*pByte = MakeByte(bLow, _bData);
+	}
+
+	return dwData;
+}
 //////////////////////////////////////////////////////////////////////////
 RttTest::RttTest()
 {
