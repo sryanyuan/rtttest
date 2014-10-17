@@ -5,6 +5,7 @@
 #include "rtt.h"
 #include "rtt_test.h"
 #include "OfflineSellSystem.h"
+#include "NotifySystem.h"
 
 #define MAX_LOADSTRING 100
 
@@ -80,7 +81,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	OfflineSellSystem::GetInstance()->AddSoldItem(4, 3888, 0, "小刀", "买东西");
 	OfflineSellSystem::GetInstance()->AddSoldItem(5, 4888, 0, "小刀", "买东西");*/
 
-	const SellItem* pItem = OfflineSellSystem::GetInstance()->GetSellItem(1);
+	/*const SellItem* pItem = OfflineSellSystem::GetInstance()->GetSellItem(1);
 	if(pItem)
 	{
 		SellItem stSoldItem = *pItem;
@@ -91,7 +92,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 	SoldItemList xSoldList;
-	OfflineSellSystem::GetInstance()->QuerySoldItem(1, xSoldList);
+	OfflineSellSystem::GetInstance()->QuerySoldItem(1, xSoldList);*/
+	NotifySystem::GetInstance()->Initialize("c:\\1.txt");
 
 	RttTest t;
 	t.Exec();

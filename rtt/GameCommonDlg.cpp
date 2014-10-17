@@ -25,7 +25,7 @@ unsigned int GetTextWidth(const char* _pText, size_t _nFontSize)
 //////////////////////////////////////////////////////////////////////////
 hgeResourceManager* g_pResMgr = NULL;
 static TextPrinter* printer = new TextPrinter;
-static GfxFont* pFont12 = new GfxFont("ËÎÌå", 12, FALSE, FALSE, FALSE);
+static GfxFont* pFont12 = new GfxFont("Î¢ÈíÑÅºÚ", 13, FALSE, FALSE, TRUE);
 static GfxFont* pFont14 = new GfxFont("ËÎÌå", 14, TRUE, FALSE, FALSE);
 //(const char* lpsFontName, int nFaceSize, BOOL bBold /* = FALSE */, BOOL bItalic /* = FALSE */, BOOL bAntialias /* = TRUE */)
 HGE* s_pHge = NULL;
